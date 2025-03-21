@@ -2,17 +2,20 @@ use std::io;
 
 mod qr_base;
 use qr_base::QRCode;
+use qr_base::ErrorCorrLevel;
+use qr_base::EncodingMode;
 
 fn main() {
     let mut qr = QRCode{
-        source: String::from("Test"),
-        pix_vals: [[0; 33];33],
-        count: 12,
-        error_correction: 2,
-        encoding_mode: 4,
+        source:        String::from("Test"),
+        pix_vals:      [[0; 33];33],
+        count:         12,
+        ec_level:      ErrorCorrLevel::Medium,
+        encode_mode: EncodingMode::Alphanumeric,
     };
     qr.all_of_the_things();
-    qr.encoding_mode = 3;
+    qr.encode_mode = EncodingMode::Numeric;
+    qr.ec_level    = ErrorCorrLevel::High;
 
     println!("{}", qr);
 
