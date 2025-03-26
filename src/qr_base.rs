@@ -57,21 +57,21 @@ pub fn getLength(ecm: EncodingMode, ver: u8) {
             EncodingMode::Alphanumeric =>  9,
             EncodingMode::Byte         =>  8,
             EncodingMode::Kanji        =>  8,
-        }
+        };
     } else if ver < 27 {
         match ecm {
             EncodingMode::Numeric      => 12,
             EncodingMode::Alphanumeric => 11,
             EncodingMode::Byte         => 16,
             EncodingMode::Kanji        => 10,
-        }
+        };
     } else {
         match ecm {
             EncodingMode::Numeric      => 14,
             EncodingMode::Alphanumeric => 13,
             EncodingMode::Byte         => 16,
             EncodingMode::Kanji        => 12,
-        }
+        };
     }
 }
 
@@ -80,9 +80,7 @@ pub struct QRCode {
     pub source:      String,
     // values of the actual pixels to be set
     // TODO: make variable size
-    pub pix_vals:    [[u8; 33]; 33],
-    // we need this?
-    pub count:       u16,
+    pub pix_vals:    Vec<Vec<u8>>,
     // Low, Medium, Quartile, High
     pub ec_level:    ErrorCorrLevel,
     // numeric, alphanumeric, binary, kanji
@@ -92,7 +90,7 @@ pub struct QRCode {
 impl fmt::Display for QRCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
-            f, "{} {} {}", self.source, self.count, self.pix_vals[0][0]
+            f, "{} {}", self.source, self.pix_vals[0][0]
         )
     }
 }

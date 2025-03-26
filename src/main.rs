@@ -4,13 +4,15 @@ mod qr_base;
 use qr_base::QRCode;
 use qr_base::ErrorCorrLevel;
 use qr_base::EncodingMode;
+mod image_help;
+use image_help::make_img;
 
 fn main() {
+    let size: usize = 33;
     let mut qr = QRCode{
-        source:        String::from("Test"),
-        pix_vals:      [[0; 33];33],
-        count:         12,
-        ec_level:      ErrorCorrLevel::Medium,
+        source:      String::from("Test"),
+        pix_vals:    vec![vec![0; size]; size],
+        ec_level:    ErrorCorrLevel::Medium,
         encode_mode: EncodingMode::Alphanumeric,
     };
     qr.all_of_the_things();
@@ -19,25 +21,27 @@ fn main() {
 
     println!("{}", qr);
 
-    let mut plain_text = String::new();
-    let mut out_path   = String::new();
+    // let mut plain_text = String::new();
+    // let mut out_path   = String::new();
 
-    println!("Welcome to the Greengo's QR Code Generator!");
+    // println!("Welcome to the Greengo's QR Code Generator!");
 
-    println!("Please enter the string that you would like to encode:");
+    // println!("Please enter the string that you would like to encode:");
 
-    io::stdin()
-        .read_line(&mut plain_text)
-        .expect("Error with input!");
+    // io::stdin()
+    //     .read_line(&mut plain_text)
+    //     .expect("Error with input!");
 
-    println!("Now please enter the name you'd like for the generated image:");
+    // println!("Now please enter the name you'd like for the generated image:");
 
-    io::stdin()
-        .read_line(&mut out_path)
-        .expect("Error with input!");
+    // io::stdin()
+    //     .read_line(&mut out_path)
+    //     .expect("Error with input!");
 
-    let plan = &plain_text[..plain_text.len()-1];
-    let plin = &out_path[..out_path.len()-1];
-    println!("Your chosen plain text was: {}", plan);
-    println!("Your save path was: {}", plin);
+    // let plan = &plain_text[..plain_text.len()-1];
+    // let plin = &out_path[..out_path.len()-1];
+    // println!("Your chosen plain text was: {}", plan);
+    // println!("Your save path was: {}", plin);
+    
+    make_img(qr.pix_vals);
 }
