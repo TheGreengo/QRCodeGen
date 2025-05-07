@@ -1,5 +1,8 @@
 use std::fmt;
 
+use crate::encd::EncodingMode;
+use crate::error_corr::ErrorCorrLevel;
+
 // help: https://www.thonky.com/qr-code-tutorial/data-analysis
 // help: https://dev.to/maxart2501/let-s-develop-a-qr-code-generator-part-iv-placing-bits-3mn1
 // help: https://observablehq.com/@zavierhenry/encoding-qr-codes
@@ -36,6 +39,7 @@ pub fn get_ch_count(ecm: EncodingMode, ver: u8) {
             EncodingMode::Alphanumeric =>  9,
             EncodingMode::Byte         =>  8,
             EncodingMode::Kanji        =>  8,
+            EncodingMode::ECI          =>  8,
         };
     } else if ver < 27 {
         match ecm {
@@ -43,6 +47,7 @@ pub fn get_ch_count(ecm: EncodingMode, ver: u8) {
             EncodingMode::Alphanumeric => 11,
             EncodingMode::Byte         => 16,
             EncodingMode::Kanji        => 10,
+            EncodingMode::ECI          => 16,
         };
     } else {
         match ecm {
@@ -50,6 +55,7 @@ pub fn get_ch_count(ecm: EncodingMode, ver: u8) {
             EncodingMode::Alphanumeric => 13,
             EncodingMode::Byte         => 16,
             EncodingMode::Kanji        => 12,
+            EncodingMode::ECI          => 16,
         };
     }
 }

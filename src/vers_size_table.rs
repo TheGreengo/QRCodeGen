@@ -1,5 +1,10 @@
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
+ 
+mod encd;
+use encd::EncodingMode;
+mod error_corr;
+use error_corr::ErrorCorrLevel;
 
 #[derive(Hash, Eq, PartialEq, Debug)]
 struct VerKey {
@@ -7,7 +12,7 @@ struct VerKey {
     pub ec:  ErrorCorrection
 }
 
-let ver_siz_map<VerKey, [usize; 40]>: = HashMap::from([
+const ver_siz_map HashMap<VerKey, [usize; 40]>: = HashMap::from([
     (VerKey::new(ErrorCorrection::Low, EncodingMode::Numeric) ,  [41, 77, 127, 187, 255, 322, 370, 461, 552, 652, 772, 883, 1022, 1101, 1250, 1408, 1548, 1725, 1903, 2061, 2232, 2409, 2620, 2812, 3057, 3283, 3517, 3669, 3909, 4158, 4417, 4686, 4965, 5253, 5529, 5836, 6153, 6479, 6743, 7089] ),
     (VerKey::new(ErrorCorrection::Medium, EncodingMode::Numeric) ,  [34, 63, 101, 149, 202, 255, 293, 365, 432, 513, 604, 691, 796, 871, 991, 1082, 1212, 1346, 1500, 1600, 1708, 1872, 2059, 2188, 2395, 2544, 2701, 2857, 3035, 3289, 3486, 3693, 3909, 4134, 4343, 4588, 4775, 5039, 5313, 5596] ),
     (VerKey::new(ErrorCorrection::Quartile, EncodingMode::Numeric) ,  [27, 48, 77, 111, 144, 178, 207, 259, 312, 364, 427, 489, 580, 621, 703, 775, 876, 948, 1063, 1159, 1224, 1358, 1468, 1588, 1718, 1804, 1933, 2085, 2181, 2358, 2473, 2670, 2805, 2949, 3081, 3244, 3417, 3599, 3791, 3993] ),
@@ -41,6 +46,6 @@ pub fn get_version(siz: usize, enc: EncodingMode, ec:  ErrorCorrection) -> usize
         curr = sizes[i];
     }
 
-    curr
+    i
 }
 

@@ -1,9 +1,11 @@
-use std::io;
+// use std::io;
 
+mod encd;
+use encd::EncodingMode;
+mod error_corr;
+use error_corr::ErrorCorrLevel;
 mod qr_base;
 use qr_base::QRCode;
-use qr_base::ErrorCorrLevel;
-use qr_base::EncodingMode;
 use qr_base::get_ver_size;
 mod image_help;
 use image_help::make_img;
@@ -24,6 +26,8 @@ fn main() {
     qr.all_of_the_things();
 
     println!("{}", qr);
+
+    print!("hello");
 
     // let mut plain_text = String::new();
     // let mut out_path   = String::new();
