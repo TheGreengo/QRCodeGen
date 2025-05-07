@@ -4,20 +4,24 @@ mod qr_base;
 use qr_base::QRCode;
 use qr_base::ErrorCorrLevel;
 use qr_base::EncodingMode;
+use qr_base::get_ver_size;
 mod image_help;
 use image_help::make_img;
+// use encoding_rs::ISO_8859_1;
 
 fn main() {
-    let size: usize = 33;
+    // first we're going to assume that we have AlphaNumeric Encoding
+    // we can work on that later
+    let size: usize = get_ver_size(7);
     let mut qr = QRCode{
-        source:      String::from("Test"),
+        source:      String::from("This is my QR code testing test"),
         pix_vals:    vec![vec![0; size]; size],
         ec_level:    ErrorCorrLevel::Medium,
         encode_mode: EncodingMode::Alphanumeric,
+        ver_num:     7,
     };
+
     qr.all_of_the_things();
-    qr.encode_mode = EncodingMode::Numeric;
-    qr.ec_level    = ErrorCorrLevel::High;
 
     println!("{}", qr);
 
