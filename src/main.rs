@@ -1,5 +1,7 @@
-// use std::io;
+use std::io;
 
+mod vers_size_table;
+use vers_size_table::get_version;
 mod encd;
 use encd::EncodingMode;
 mod error_corr;
@@ -11,40 +13,54 @@ mod image_help;
 use image_help::make_img;
 // use encoding_rs::ISO_8859_1;
 
+// Nexts:
+// - get version smartly
+
 fn main() {
     // first we're going to assume that we have AlphaNumeric Encoding
     // we can work on that later
-    let size: usize = get_ver_size(7);
+    let mut plain_text = String::new();
+
+    println!("Welcome to the Greengo's QR Code Generator!");
+
+    println!("Please enter the string that you would like to encode:");
+
+    io::stdin()
+        .read_line(&mut plain_text)
+        .expect("Error with input!");
+
+    println!("Please enter the level of error correction:");
+
+    let mut rrrrrr = String::new();
+    io::stdin()
+        .read_line(&mut rrrrrr)
+        .expect("Error with input!");
+    let rrr = &rrrrrr[..rrrrrr.len() - 1];
+
+    let (vers, maxx) = get_version(
+       plain_text.len() - 1, 
+       EncodingMode::Alphanumeric, 
+       ErrorCorrLevel::from_str(rrr)
+   );
+    println!("version: {}", vers);
+    
+    let size: usize = get_ver_size(vers);
+
     let mut qr = QRCode{
-        source:      String::from("This is my QR code testing test"),
+        source:      String::from(plain_text),
         pix_vals:    vec![vec![0; size]; size],
-        ec_level:    ErrorCorrLevel::Medium,
+        ec_level:    ErrorCorrLevel::from_str(rrr),
         encode_mode: EncodingMode::Alphanumeric,
         ver_num:     7,
+        bit_str:     vec![0; maxx]
     };
 
     qr.all_of_the_things();
 
-    println!("{}", qr);
-
-    print!("hello");
-
-    // let mut plain_text = String::new();
     // let mut out_path   = String::new();
+    let mut curr_ind: usize = 0;
 
-    // println!("Welcome to the Greengo's QR Code Generator!");
-
-    // println!("Please enter the string that you would like to encode:");
-
-    // io::stdin()
-    //     .read_line(&mut plain_text)
-    //     .expect("Error with input!");
-
-    // println!("Now please enter the name you'd like for the generated image:");
-
-    // io::stdin()
-    //     .read_line(&mut out_path)
-    //     .expect("Error with input!");
+    println!("{}", qr);
 
     // let plan = &plain_text[..plain_text.len()-1];
     // let plin = &out_path[..out_path.len()-1];

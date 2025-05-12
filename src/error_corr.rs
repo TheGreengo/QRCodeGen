@@ -16,4 +16,24 @@ impl ErrorCorrLevel {
             ErrorCorrLevel::High     => 8,
         }
     }
+
+    pub fn from_str(s: &str) -> Self {
+        println!("{}", s);
+        match s {
+            "Low"      => ErrorCorrLevel::Low,
+            "Medium"   => ErrorCorrLevel::Medium,
+            "Quartile" => ErrorCorrLevel::Quartile,
+            "High"     => ErrorCorrLevel::High,
+            other      => ErrorCorrLevel::Medium,
+        }
+    }
+
+    pub fn to_str(&self) -> &str {
+        match self {
+            ErrorCorrLevel::Low      => "Low",
+            ErrorCorrLevel::Medium   => "Medium",
+            ErrorCorrLevel::Quartile => "Quartile",
+            ErrorCorrLevel::High     => "High",
+        }
+    }
 }

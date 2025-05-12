@@ -1,54 +1,34 @@
 use std::fmt;
+use std::io;
 
 use crate::encd::EncodingMode;
 use crate::error_corr::ErrorCorrLevel;
 
 // help: https://www.thonky.com/qr-code-tutorial/data-analysis
 // help: https://dev.to/maxart2501/let-s-develop-a-qr-code-generator-part-iv-placing-bits-3mn1
-// help: https://observablehq.com/@zavierhenry/encoding-qr-codes
-// help: https://en.wikipedia.org/wiki/ISO/IEC_8859-1
-
-// alpha-numeric 0-9: 0-9 A-Z: 10-35, <space>: 36, 
-// $: 37, %: 38, *: 39, +: 40, -: 41, .: 42, /: 43, :: 44
-
-// Level of error correction
-
-// Step  0: Initialize w/ error correction level & text
-// Step  1: Determine encoding type --- SKIP FOR NOW
-// Step  2: Determine number of things needed
-// Step  3: Start binary string with mode indicator
-// Step  4: Add character count indicator
-// Step  5: Encode data (create binary string)
-// Step  6: Break into 8s
-// Step  7: Determine number of codewords and add padding 0s 
-// Step  8: If necessary, add padding pattern
-// Step  9: Determine number of groups and blocks
-// Step 10: 
-
-// TODO: make this a thing
 
 pub fn get_ver_size(ver: usize) -> usize {
     (ver * 4) + 17
 }
 
 // get the length of the data sequence
-pub fn get_ch_count(ecm: EncodingMode, ver: u8) {
-    if ver < 10 {
+pub fn get_ch_count(ecm: &EncodingMode, ver: &u8) -> usize {
+    if ver < &10 {
         match ecm {
             EncodingMode::Numeric      => 10,
             EncodingMode::Alphanumeric =>  9,
             EncodingMode::Byte         =>  8,
             EncodingMode::Kanji        =>  8,
             EncodingMode::ECI          =>  8,
-        };
-    } else if ver < 27 {
+        }
+    } else if ver < &27 {
         match ecm {
             EncodingMode::Numeric      => 12,
             EncodingMode::Alphanumeric => 11,
             EncodingMode::Byte         => 16,
             EncodingMode::Kanji        => 10,
             EncodingMode::ECI          => 16,
-        };
+        }
     } else {
         match ecm {
             EncodingMode::Numeric      => 14,
@@ -56,7 +36,7 @@ pub fn get_ch_count(ecm: EncodingMode, ver: u8) {
             EncodingMode::Byte         => 16,
             EncodingMode::Kanji        => 12,
             EncodingMode::ECI          => 16,
-        };
+        }
     }
 }
 
@@ -70,13 +50,16 @@ pub struct QRCode {
     // numeric, alphanumeric, binary, kanji
     pub encode_mode: EncodingMode,
     //
-    pub ver_num:     u8
+    pub ver_num:     u8,
+    // 
+    pub bit_str:     Vec<u8>
 }
 
 impl fmt::Display for QRCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
-            f, "{} {}", self.source, self.pix_vals[0][0]
+            f, "{} {} {}", self.source, 
+            self.pix_vals[0][0], self.ec_level.to_str()
         )
     }
 }
@@ -143,11 +126,43 @@ impl QRCode {
         self.encode_timing();
         self.encode_version();
         self.encode_dark_module();
+        self.encode_data();
+        self.print();
+    }
+
+    fn print(&self) {
+        for i in 0..self.bit_str.len() {
+            print!("{:1}", self.bit_str[i]);
+        }
+        print!("\n");
+    }
+
+    fn enc_enc_mode(&mut self) {
+        let code = self.encode_mode.get_mode_indicator();
+        for i in 0..3 {
+            self.bit_str[i] = (code & (0b1000 >> i)) >> (3 - i);
+        }
+    }
+
+    fn enc_char_count_ind(&mut self) {
+        let ch_count = get_ch_count(&self.encode_mode, &self.ver_num);
+        let place = 1 << (ch_count - 1);
+        let mut curr: usize = 0;
+
+        for i in 0..ch_count {
+            curr = place >> i;
+            if ((self.source.len() & curr) != 0) {
+                self.bit_str[i + 4] = 1;
+            }
+        }
+        println!("Character Count: {:b}", self.source.len());
     }
 
     fn encode_data(&mut self) {
         // encode mode indicator
+        self.enc_enc_mode();
         // encode character count indicator
+        self.enc_char_count_ind();
         // encode data
         // add terminator zeros
         // add to make it multiple of 8
